@@ -1,65 +1,148 @@
-import Image from "next/image";
+"use client";
+
+import { useState } from "react";
+
+type RewriteResult = {
+  option_0: {
+    label: string;
+    text: string;
+    alternatives: {
+      feelings: string[];
+      needs: string[];
+      requests: string[];
+    };
+  };
+  option_1: {
+    label: string;
+    text: string;
+  };
+  option_2: {
+    label: string;
+    text: string;
+  };
+  proof_line: string;
+};
 
 export default function Home() {
+  const [message, setMessage] = useState("");
+  const [result, setResult] = useState<RewriteResult | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleRewrite = async () => {
+    setLoading(true);
+    setError("");
+    setResult(null);
+
+    try {
+      const res = await fetch("/api/rewrite", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Something went wrong");
+      }
+
+      setResult(data.result);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unknown error");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const copyText = async (text: string) => {
+    await navigator.clipboard.writeText(text);
+  };
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <main className="min-h-screen bg-white px-6 py-12 text-neutral-900">
+      <div className="mx-auto max-w-3xl">
+        <h1 className="mb-3 text-4xl font-semibold tracking-tight">
+          Rewrite this better
+        </h1>
+        <p className="mb-6 text-neutral-600">
+          Say it so they actually hear you.
+        </p>
+
+        <textarea
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder="Type what you want to say to your partner..."
+          className="min-h-36 w-full rounded-2xl border border-neutral-300 p-4 text-base outline-none"
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+
+        <button
+          onClick={handleRewrite}
+          disabled={!message.trim() || loading}
+          className="mt-4 rounded-2xl bg-black px-5 py-3 text-white disabled:opacity-50"
+        >
+          {loading ? "Rewriting..." : "Say it so they actually hear you"}
+        </button>
+
+        {error && <p className="mt-4 text-red-600">{error}</p>}
+
+        {result && (
+          <div className="mt-10 space-y-6">
+            <p className="text-sm text-neutral-500">{result.proof_line}</p>
+
+            <section className="rounded-2xl border border-neutral-200 p-5">
+              <h2 className="mb-3 text-xl font-medium">{result.option_0.label}</h2>
+              <p className="mb-4 whitespace-pre-wrap">{result.option_0.text}</p>
+
+              <div className="space-y-2 text-sm text-neutral-700">
+                <p>
+                  <strong>Feeling alternatives:</strong>{" "}
+                  {result.option_0.alternatives.feelings.join(" · ")}
+                </p>
+                <p>
+                  <strong>Need alternatives:</strong>{" "}
+                  {result.option_0.alternatives.needs.join(" · ")}
+                </p>
+                <p>
+                  <strong>Request alternatives:</strong>{" "}
+                  {result.option_0.alternatives.requests.join(" · ")}
+                </p>
+              </div>
+
+              <button
+                onClick={() => copyText(result.option_0.text)}
+                className="mt-4 rounded-xl border px-4 py-2"
+              >
+                Copy message
+              </button>
+            </section>
+
+            <section className="rounded-2xl border border-neutral-200 p-5">
+              <h2 className="mb-3 text-xl font-medium">{result.option_1.label}</h2>
+              <p className="whitespace-pre-wrap">{result.option_1.text}</p>
+              <button
+                onClick={() => copyText(result.option_1.text)}
+                className="mt-4 rounded-xl border px-4 py-2"
+              >
+                Copy message
+              </button>
+            </section>
+
+            <section className="rounded-2xl border border-neutral-200 p-5">
+              <h2 className="mb-3 text-xl font-medium">{result.option_2.label}</h2>
+              <p className="whitespace-pre-wrap">{result.option_2.text}</p>
+              <button
+                onClick={() => copyText(result.option_2.text)}
+                className="mt-4 rounded-xl border px-4 py-2"
+              >
+                Copy message
+              </button>
+            </section>
+          </div>
+        )}
+      </div>
+    </main>
   );
 }
