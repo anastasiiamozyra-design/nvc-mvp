@@ -166,7 +166,7 @@ export default function Home() {
             rel="noreferrer"
             className="text-sm text-neutral-600 underline underline-offset-4 hover:text-neutral-900"
           >
-            Help improve this
+            Help improve this project
           </a>
         </div>
 
