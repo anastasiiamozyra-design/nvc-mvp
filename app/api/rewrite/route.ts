@@ -137,7 +137,7 @@ export async function POST(req: Request) {
         },
         {
           role: "user",
-          content: `Rewrite this message for a romantic relationship conflict:
+          content: `Rewrite this message for a romantic relationship conflict in the same language as the user's message:
 
 "${message}"`,
         },
