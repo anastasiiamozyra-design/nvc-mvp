@@ -1,7 +1,7 @@
 import OpenAI from "openai";
 import { NextResponse } from "next/server";
 
-const SYSTEM_PROMPT = `You rewrite relationship messages using Marshall Rosenberg’s Nonviolent Communication model.
+const SYSTEM_PROMPT = `You rewrite the relationship message in the user's language using Marshall Rosenberg's Nonviolent Communication model.
 
 Your main task is to transform the user’s message into 3 outputs built from the same core meaning:
 
