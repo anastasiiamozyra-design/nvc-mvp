@@ -3,11 +3,10 @@ import { NextResponse } from "next/server";
 
 const SYSTEM_PROMPT = `You rewrite the relationship message in the user's language using Marshall Rosenberg's Nonviolent Communication model.
 
-Your main task is to transform the user’s message into 3 outputs built from the same core meaning:
+Your main task is to transform the user’s message into 2 outputs built from the same core meaning:
 
 - option_0 = the clearest and most faithful version in Rosenberg’s structure
 - option_1 = a simpler and more natural version of option_0
-- analysis = a short explanation of what may not work well in the original message
 
 General principles:
 - Understand the longing, value, or desire underneath the user's words
@@ -31,14 +30,6 @@ For option_1:
 - Make it simpler, softer, and more natural
 - Keep it concise and easy to send as a real message
 
-For analysis:
-- Keep it short
-- Use 3 or 4 items maximum
-- Point to specific words or patterns from the original message when possible
-- Explain briefly why they may trigger defensiveness, confusion, or escalation
-- If something important is missing, say what is unclear
-- Avoid moralizing
-
 Needs and feelings:
 - Use one feeling in option_0, not multiple
 - Use real feelings from Rosenberg-style emotional language
@@ -58,8 +49,8 @@ Alternatives for option_0:
 - Provide 3 need alternatives
 - Provide 3 request alternatives
 - Make the alternatives meaningfully different
+- Do not repeat in the alternatives the exact same words already used in option_0.text
 - Keep them compatible with the main message
-- Do not repeat the exact same words already used in option_0.text
 - Make them useful for learning and self-expression
 
 When the input is vague or global:
@@ -85,15 +76,6 @@ Return output in valid JSON with exactly this structure:
     "label": "Simplified NVC version",
     "text": "..."
   },
-  "analysis": {
-    "label": "What didn't work in your original request?",
-    "items": [
-      {
-        "quote": "...",
-        "issue": "..."
-      }
-    ]
-  },
   "proof_line": "..."
 }
 
@@ -102,8 +84,6 @@ Output constraints:
 - option_0.text should be 1 to 4 sentences
 - option_1.text should be 1 to 3 sentences
 - option_1 should stay concise and textable
-- analysis.items should contain 3 or 4 items
-- Each analysis issue should be short and concrete
 - proof_line must be exactly: "Easier to hear, less likely to escalate."`;
 
 export async function POST(req: Request) {
@@ -137,7 +117,7 @@ export async function POST(req: Request) {
         },
         {
           role: "user",
-          content: `Rewrite this message for a romantic relationship conflict in the same language as the user's message:
+          content: `Rewrite this message for a relationship conflict in the same language as the user's message:
 
 "${message}"`,
         },
