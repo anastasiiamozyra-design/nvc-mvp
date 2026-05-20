@@ -17,14 +17,7 @@ type RewriteResult = {
     label: string;
     text: string;
   };
-  analysis: {
-    label: string;
-    items: {
-      quote: string;
-      issue: string;
-    }[];
-  };
-  proof_line: string;
+    proof_line: string;
 };
 
 const STEP_HELP: Record<string, string> = {
