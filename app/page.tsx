@@ -218,23 +218,7 @@ export default function Home() {
               </button>
             </section>
 
-            <section className="rounded-2xl border border-neutral-200 p-5">
-              <h2 className="mb-3 text-xl font-medium">{result.analysis.label}</h2>
-
-              <div className="space-y-3">
-                {result.analysis.items.map((item, index) => (
-                  <div key={`${item.quote}-${index}`} className="text-sm text-neutral-700">
-                    {item.quote ? (
-                      <p>
-                        <strong>“{item.quote}”</strong> — {item.issue}
-                      </p>
-                    ) : (
-                      <p>{item.issue}</p>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </section>
+          
           </div>
         )}
       </div>
