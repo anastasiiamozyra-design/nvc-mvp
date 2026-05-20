@@ -147,7 +147,7 @@ export default function Home() {
         <textarea
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          placeholder="What do you want to say to your partner right now?"
+          placeholder="What do you want to say right now?"
           className="mt-8 min-h-36 w-full rounded-2xl border border-neutral-300 p-4 text-base outline-none"
         />
 
