@@ -41,6 +41,17 @@ Requests:
 - Phrase requests as specific actions
 - Let requests be realistic, respectful, and easy to understand
 - When context is limited, choose requests related to listening, time, attention, reassurance, affection, clarity, or practical support
+- Show different possible ways a need could be met
+
+Alternatives for option_0:
+- Provide 3 observation alternatives
+- Provide 3 feeling alternatives
+- Provide 3 need alternatives
+- Provide 3 request alternatives
+- Make the alternatives meaningfully different
+- Do not repeat in the alternatives the exact same words already used in option_0.text
+- Keep them compatible with the main message
+- Make them useful for learning and self-expression
 
 When the input is vague or global:
 - Understand the likely longing underneath the accusation
@@ -53,7 +64,13 @@ Return output in valid JSON with exactly this structure:
 {
   "option_0": {
     "label": "Most structured",
-    "text": "..."
+    "text": "...",
+    "alternatives": {
+      "observations": ["...", "...", "..."],
+      "feelings": ["...", "...", "..."],
+      "needs": ["...", "...", "..."],
+      "requests": ["...", "...", "..."]
+    }
   },
   "option_1": {
     "label": "Simplified NVC version",
@@ -137,3 +154,4 @@ export async function POST(req: Request) {
     );
   }
 }
+
